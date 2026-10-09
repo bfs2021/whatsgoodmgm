@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import BottomNav from '@/components/BottomNav'
+import Logo from '@/components/Logo'
 import ThemeToggle from '@/components/ThemeToggle'
 
 const nav = [
@@ -14,8 +15,9 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
     <>
       <header className="border-b border-[var(--line)]">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-6 gap-y-1 px-4 py-4">
-          <Link href="/" className="font-display text-xl font-semibold tracking-tight md:text-2xl">
-            What&apos;s Good<span className="text-[var(--accent)]">.</span>MGM
+          <Link href="/" className="flex items-center gap-2.5 font-display text-xl font-semibold tracking-tight md:text-2xl">
+            <Logo className="h-8 w-auto md:h-9" />
+            <span>What&apos;s Good<span className="text-[var(--accent)]">.</span>MGM</span>
           </Link>
           <div className="flex items-center gap-4">
             {/* mobile gets the bottom tab bar; up top only "about" (not a tab) + theme */}

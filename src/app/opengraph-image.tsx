@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og'
+import { LOGO_ASPECT, LOGO_PATH, LOGO_VIEWBOX } from '@/components/logoPath'
 
 export const alt = 'WhatsGoodMGM · Know what\'s good in the Gump'
 export const size = { width: 1200, height: 630 }
@@ -6,7 +7,7 @@ export const contentType = 'image/png'
 
 // Sitewide default og:image (file convention). Brand-true and deliberately
 // simple: warm cream ground (the site's default light theme), burnt-orange
-// accent, big serif wordmark.
+// accent, big serif wordmark, the martini + coffee mark bottom right.
 export default function OpenGraphImage() {
   return new ImageResponse(
     (
@@ -20,8 +21,17 @@ export default function OpenGraphImage() {
           alignItems: 'flex-start',
           background: '#f6efe3',
           padding: '96px',
+          position: 'relative',
         }}
       >
+        <svg
+          viewBox={LOGO_VIEWBOX}
+          width={Math.round(230 * LOGO_ASPECT)}
+          height={230}
+          style={{ position: 'absolute', bottom: 72, right: 96 }}
+        >
+          <path fill="#3a2c22" fillRule="evenodd" d={LOGO_PATH} />
+        </svg>
         <div
           style={{
             display: 'flex',
