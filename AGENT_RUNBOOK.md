@@ -21,6 +21,8 @@ Fetch each page; extract upcoming events (next 60 days) into the JSON shape belo
 - https://www.newsouthbookstore.com/events
 - https://cloverdaleplayhouse.org/  (shows and improv nights)
 - https://www.pikeroad.us/events
+- https://www.montgomerysymphony.org/concerts-and-events/26-27season/  (Montgomery Symphony: the season page lists dates but not venues; open each concert's page for the venue. The URL changes each season — if it 404s, find the current season from /concerts-and-events/)
+- https://montgomeryballet.org/ballet-performances/  (Montgomery Ballet: include only public shows in the River Region; skip touring stops outside it (Selma, Monroeville, etc.) and weekday-morning LEAP school performances)
 - https://www.montgomerychamber.com/events/  (ONLY community-facing items: markets, festivals, public recreation — skip networking, ribbon cuttings, member luncheons)
 Skip: anything without an explicit date, anything past, duplicates you already saw in another source this run (the writer also dedupes — belt and suspenders), bar drink-specials with no event content, and anything that reads as an ad rather than an event.
 Include with confidence: public workshops, classes, tech meetups, and educational events count as community events whenever anyone can show up (free or ticketed). Only skip closed-door networking, member-only functions, sales-pitch seminars (real estate, MLM, "grand opening" promos), volunteer-signup pages standing in for the event itself, syndicated online-only listings dressed up with a local address, and nationally syndicated multi-city certification bootcamps (PMP, Six Sigma, and the like at generic coworking addresses) — the test is whether a local person organized it, not whether it is educational.
