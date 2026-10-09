@@ -1,6 +1,6 @@
 import type { NormalizedEvent } from '../fetchers/types'
 
-const SOURCE_TYPES = new Set(['eventbrite', 'facebook', 'ics', 'reddit', 'simpleview', 'tribe', 'statsapi', 'civicplus', 'website'])
+const SOURCE_TYPES = new Set(['facebook', 'ics', 'reddit', 'simpleview', 'tribe', 'statsapi', 'civicplus', 'website'])
 const MAX_DAYS_OUT = 120
 const MAX_TITLE_LENGTH = 300
 

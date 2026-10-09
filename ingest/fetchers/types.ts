@@ -1,5 +1,5 @@
 export type SourceType =
-  | 'eventbrite' | 'facebook' | 'ics' | 'reddit'
+  | 'facebook' | 'ics' | 'reddit'
   | 'simpleview' | 'tribe' | 'statsapi' | 'civicplus' | 'website'
 
 export type NormalizedEvent = {

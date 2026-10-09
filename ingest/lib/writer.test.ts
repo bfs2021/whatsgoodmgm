@@ -18,7 +18,7 @@ function stubClient(existing: unknown[] = []) {
 }
 
 const ev = (over: Partial<NormalizedEvent>): NormalizedEvent => ({
-  title: 'Jazz Night', startDateTime: '2026-07-10T23:00:00Z', sourceType: 'eventbrite',
+  title: 'Jazz Night', startDateTime: '2026-07-10T23:00:00Z', sourceType: 'website',
   sourceUrl: 'https://eventbrite.com/e/1', venue: { name: 'The Alley' }, ...over,
 })
 

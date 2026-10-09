@@ -1,5 +1,4 @@
 import { config } from 'dotenv'
-import { eventbriteFetcher } from './fetchers/eventbrite'
 import { simpleviewFetcher } from './fetchers/simpleview'
 import { tribeFetcher } from './fetchers/tribe'
 import { statsapiFetcher } from './fetchers/statsapi'
@@ -11,7 +10,7 @@ import { makeIngestClient, writeEvents } from './lib/writer'
 config({ path: '.env.local', quiet: true })
 
 const FETCHERS: Record<string, Fetcher> = {
-  eventbrite: eventbriteFetcher, simpleview: simpleviewFetcher,
+  simpleview: simpleviewFetcher,
   tribe: tribeFetcher, statsapi: statsapiFetcher, civicplus: civicplusFetcher,
 }
 const WINDOW_DAYS = 60

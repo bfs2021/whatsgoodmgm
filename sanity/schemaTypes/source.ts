@@ -4,7 +4,7 @@ export const source = defineType({
   fields: [
     defineField({ name: 'name', type: 'string', validation: r => r.required() }),
     defineField({ name: 'platform', type: 'string', validation: r => r.required(),
-      options: { list: ['facebook','eventbrite','ics','simpleview','tribe','statsapi','civicplus','reddit','website'] } }),
+      options: { list: ['facebook','ics','simpleview','tribe','statsapi','civicplus','reddit','website'] } }),
     defineField({ name: 'identifier', type: 'string', validation: r => r.required(),
       description: 'Base URL (simpleview/tribe), team id (statsapi), RSS URL (civicplus), FB page id, or feed URL' }),
     defineField({ name: 'homepage', type: 'url',
