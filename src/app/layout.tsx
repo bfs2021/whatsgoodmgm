@@ -24,6 +24,8 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  // Google Search Console ownership (info@mmintelligence.ai). Keep: removing it unverifies the property.
+  verification: { google: 'QuGL_V5xhEJvVfKLYtTBCNmH-mmWmFwNqsav8fI-TbQ' },
   title: { default: 'WhatsGoodMGM · Know what\'s good in the Gump', template: '%s · WhatsGoodMGM' },
   description: 'a free, community-made guide to what\'s good in Montgomery, Alabama. events, maps, and a calendar you can subscribe to.',
   openGraph: {
