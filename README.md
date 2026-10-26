@@ -99,7 +99,7 @@ docs/SETUP.md        one-time setup: webhook, GitHub secrets, scheduled agent
 
 ## Operations
 
-- **Deploy:** merge to `main`. Vercel (Hobby team) builds and ships production automatically.
+- **Deploy:** open a PR. A maintainer (Mishal or Mazin) reviews and merges it, and Vercel (Hobby team) ships `main` to production automatically. Contributors never push to `main`.
 - **Weekly refresh:** a scheduled Claude Code agent runs `AGENT_RUNBOOK.md` on Mondays (6 AM Central). It runs the structured ingest, reads a list of trusted event pages, writes events, tags interests, and posts a digest. Setup lives in `docs/SETUP.md`.
 - **Manual ingest:** `npm run ingest -- --all --dry-run` first, read the digest, then run without `--dry-run`.
 - **Venue pins:** `npx tsx scripts/geocode-venues.ts --dry-run`, review the ACCEPTED/REJECTED table, then run for real. Only rooftop-level matches are saved.
