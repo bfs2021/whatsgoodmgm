@@ -10,7 +10,7 @@ export const event = defineType({
     defineField({ name: 'title', type: 'string', validation: r => r.required() }),
     defineField({
       name: 'slug', type: 'slug', validation: r => r.required(),
-      options: { source: (doc: any) => `${doc.title ?? ''} ${(doc.startDateTime ?? '').slice(0, 10)}` },
+      options: { source: (doc) => `${String(doc.title ?? '')} ${String(doc.startDateTime ?? '').slice(0, 10)}` },
     }),
     defineField({ name: 'startDateTime', type: 'datetime', validation: r => r.required() }),
     defineField({ name: 'endDateTime', type: 'datetime' }),
