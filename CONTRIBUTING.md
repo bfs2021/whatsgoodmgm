@@ -2,6 +2,8 @@
 
 Thanks for helping. This guide covers how we work; the [README](README.md) covers what the project is and how to run it.
 
+> **The one rule:** never push or merge to `main` yourself. All changes go through a pull request reviewed by **Mishal (@thebadcoder96)** or **Mazin (@therealmazin)**, and only they merge. `main` deploys straight to production.
+
 ## Picking something to work on
 
 Work is tracked in GitHub issues. Labels:
@@ -21,9 +23,9 @@ Comment on the issue (or tell a maintainer) before you start so two people don't
 1. **Branch from `main`:** `git switch main && git pull && git switch -c <type>/<short-name>`
    e.g. `fix/flyer-fallback`, `feat/venue-page`, `docs/runbook-zoo`.
 2. **Make small, focused commits.** One idea per PR is easier to review than five.
-3. **Open a pull request** into `main` and fill in the template.
-4. **A maintainer reviews.** Expect questions; respond in the PR. Don't merge your own PR unless a maintainer says so.
-5. **Merging deploys to production** (Vercel). Treat every merge as a release.
+3. **Open a pull request** into `main`, fill in the template, and **request review from @thebadcoder96 or @therealmazin**. GitHub requests it automatically through `.github/CODEOWNERS`.
+4. **A maintainer reviews.** Expect questions; respond in the PR and push fixes to the same branch. Never merge your own PR.
+5. **Only Mishal or Mazin merge.** Merging deploys to production (Vercel), so every merge is a release.
 
 ### Commit messages
 
