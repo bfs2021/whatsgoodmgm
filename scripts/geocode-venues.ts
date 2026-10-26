@@ -15,6 +15,9 @@ const MIN_DELAY_MS = 1100
 // Montgomery, AL metro bounding box
 const BBOX = { minLat: 32.20, maxLat: 32.55, minLng: -86.45, maxLng: -86.05 }
 
+// --dry-run: report what would change without writing to Sanity
+const DRY_RUN = process.argv.includes('--dry-run')
+
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 let lastCallAt = 0
@@ -146,6 +149,41 @@ const CORRECTIONS: Correction[] = [
 type Row = { venue: string; status: 'ACCEPTED' | 'REJECTED' | 'CORRECTED' | 'SKIPPED' | 'LEFT AS-IS'; detail: string }
 const OK_STATUSES = new Set(['ACCEPTED', 'CORRECTED', 'SKIPPED'])
 
+// ── Address-only fallback ──────────────────────────────────────────────────
+// Many venues are small businesses OSM doesn't know by name, but their street
+// address geocodes fine. Only accept a rooftop-level match: the result must
+// carry the same house number and share a street-name token, so we never pin
+// a venue to a street centroid or a same-named road across town.
+
+/** "620 Oliver Road, #suite d, Montgomery, AL 36117, Montgomery, AL" → "620 Oliver Road, Montgomery, AL 36117" */
+function cleanAddress(raw: string): string {
+  const parts = raw
+    .split(',')
+    .map(p => p.trim())
+    .filter(p => p && !/^(#|suite\b|ste\b|unit\b)/i.test(p) && !/^usa$/i.test(p))
+  // Drop repeated trailing "City, AL" fragments the source feeds sometimes append
+  const seen = new Set<string>()
+  return parts.filter(p => (seen.has(p.toLowerCase()) ? false : (seen.add(p.toLowerCase()), true))).join(', ')
+}
+
+function evaluateAddress(results: NominatimResult[], address: string): Evaluation {
+  const m = address.match(/^(\d+)\s+([^,]+)/)
+  if (!m) return { rejected: 'address has no house number (would only match a street centroid)' }
+  const [, houseNumber, street] = m
+  const streetTokens = normalizeTokens(street!).filter(t => !['street', 'road', 'avenue', 'drive', 'boulevard', 'blvd', 'ave', 'loop', 'lane', 'parkway', 'pkwy'].includes(t))
+
+  for (const r of results) {
+    const latNum = parseFloat(r.lat)
+    const lngNum = parseFloat(r.lon)
+    const inBbox = latNum >= BBOX.minLat && latNum <= BBOX.maxLat && lngNum >= BBOX.minLng && lngNum <= BBOX.maxLng
+    const sameNumber = r.address?.house_number?.split(';')[0] === houseNumber
+    const road = (r.address?.road ?? '').toLowerCase()
+    const sameStreet = streetTokens.length > 0 && streetTokens.some(t => road.includes(t))
+    if (inBbox && sameNumber && sameStreet) return { accepted: { ...r, latNum, lngNum } }
+  }
+  return { rejected: `no rooftop match for "${address}"` }
+}
+
 async function geocodeVenue(venue: Venue): Promise<Evaluation> {
   const queries: string[] = []
   if (venue.address) queries.push(`${venue.name}, ${venue.address}`)
@@ -163,7 +201,18 @@ async function geocodeVenue(venue: Venue): Promise<Evaluation> {
     outcome = evaluate(raw, venue)
     if ('accepted' in outcome) break
   }
-  return outcome
+  if ('accepted' in outcome) return outcome
+
+  // Fallback: the street address alone (also covers venues whose name IS an address)
+  const address = venue.address || (/^\d+\s/.test(venue.name) ? venue.name : null)
+  if (!address) return outcome
+  const cleaned = cleanAddress(address)
+  try {
+    const byAddress = evaluateAddress(await throttledSearch(cleaned), cleaned)
+    return 'accepted' in byAddress ? byAddress : { rejected: `${outcome.rejected}; ${byAddress.rejected}` }
+  } catch (e) {
+    return { rejected: `${outcome.rejected}; address fetch error: ${(e as Error).message}` }
+  }
 }
 
 async function correctImprecisePins(rows: Row[]): Promise<void> {
@@ -201,7 +250,7 @@ async function correctImprecisePins(rows: Row[]): Promise<void> {
       continue
     }
 
-    await client.patch(c.id).set({ lat: target.lat, lng: target.lng, address: c.address }).commit()
+    if (!DRY_RUN) await client.patch(c.id).set({ lat: target.lat, lng: target.lng, address: c.address }).commit()
     const from = current.lat != null && current.lng != null ? `(${current.lat.toFixed(4)}, ${current.lng.toFixed(4)})` : '(unpinned)'
     rows.push({ venue: c.name, status: 'CORRECTED', detail: `${from} → (${target.lat.toFixed(4)}, ${target.lng.toFixed(4)}) — ${target.via}` })
   }
@@ -213,6 +262,7 @@ async function main() {
     `*[_type=="venue" && !defined(lat)]{_id, name, address, neighborhood}`
   )
 
+  if (DRY_RUN) console.log('DRY RUN: nothing will be written to Sanity.\n')
   console.log(`Found ${venues.length} unpinned venue(s). Geocoding via Nominatim (~${MIN_DELAY_MS}ms/request)...\n`)
 
   const rows: Row[] = []
@@ -225,7 +275,7 @@ async function main() {
       const c = outcome.accepted
       const patch: Record<string, unknown> = { lat: c.latNum, lng: c.lngNum }
       if (!venue.address) patch.address = trimAddress(c)
-      await client.patch(venue._id).set(patch).commit()
+      if (!DRY_RUN) await client.patch(venue._id).set(patch).commit()
       accepted++
       rows.push({
         venue: venue.name,
