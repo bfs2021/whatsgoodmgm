@@ -1,6 +1,9 @@
 'use client'
 import { useRouter, usePathname } from 'next/navigation'
 import { useEffect, useRef, useState, useTransition, type KeyboardEvent } from 'react'
+import { DEFAULT_LIST_DAYS } from '@/lib/events/filter'
+
+const DEFAULT_DAYS = String(DEFAULT_LIST_DAYS)
 
 const pill = 'shrink-0 rounded-full border border-[var(--line)] bg-[var(--surface-2)] px-3.5 py-1.5 text-[var(--ink)] focus:border-[var(--accent-deep)] max-md:py-2.5'
 
@@ -174,7 +177,7 @@ export default function EventFilters({ q, category, interest, days, free, catego
     if (next.q) params.set('q', next.q)
     if (next.category) params.set('category', next.category)
     if (next.interest) params.set('interest', next.interest)
-    if (next.days && next.days !== '30') params.set('days', next.days)
+    if (next.days && next.days !== DEFAULT_DAYS) params.set('days', next.days)
     if (next.free) params.set('free', '1')
     const qs = params.toString()
     startTransition(() => {
@@ -187,7 +190,7 @@ export default function EventFilters({ q, category, interest, days, free, catego
       q: overrides.q ?? search,
       category: overrides.category ?? category ?? '',
       interest: overrides.interest ?? interest ?? '',
-      days: overrides.days ?? days ?? '30',
+      days: overrides.days ?? days ?? DEFAULT_DAYS,
       free: overrides.free ?? !!free,
     }
   }
@@ -270,7 +273,7 @@ export default function EventFilters({ q, category, interest, days, free, catego
       <PillSelect
         id="events-days"
         label="date range"
-        value={days ?? '30'}
+        value={days ?? DEFAULT_DAYS}
         options={daysOptions}
         onChange={v => navigate(current({ days: v }))}
       />
@@ -292,7 +295,7 @@ export default function EventFilters({ q, category, interest, days, free, catego
           the search box is submitted natively via Enter. */}
       {category ? <input type="hidden" name="category" value={category} /> : null}
       {interest ? <input type="hidden" name="interest" value={interest} /> : null}
-      {days && days !== '30' ? <input type="hidden" name="days" value={days} /> : null}
+      {days && days !== DEFAULT_DAYS ? <input type="hidden" name="days" value={days} /> : null}
 
       <span
         aria-hidden={!pending}

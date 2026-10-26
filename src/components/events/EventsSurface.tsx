@@ -1,9 +1,10 @@
+import Link from 'next/link'
 import { sanityFetch } from '@/lib/sanity/fetch'
 import { UPCOMING_OR_RECURRING, EVENTS_SEARCH, type EventDoc } from '@/lib/sanity/queries'
 import { CATEGORIES } from '@/lib/events/categories'
 import { INTERESTS } from '@/lib/events/interests'
 import { expandOccurrences } from '@/lib/events/occurrences'
-import { matchesFilters } from '@/lib/events/filter'
+import { DEFAULT_LIST_DAYS, matchesFilters } from '@/lib/events/filter'
 import {
   addDays, addMonths, groupByDay, isDayKey, isMonthKey, monthGrid, todayKey, weekStart,
   type Occurrence,
@@ -35,7 +36,7 @@ export async function EventsSurface({ view, searchParams }: { view: EventsView; 
   const today = todayKey(now)
 
   // window per view
-  const windowDays = Math.min(Math.max(Number(daysParam) || 30, 1), 90)
+  const windowDays = Math.min(Math.max(Number(daysParam) || DEFAULT_LIST_DAYS, 1), 90)
   const ym = m && isMonthKey(m) ? m : today.slice(0, 7)
   const anchor = w && isDayKey(w) ? weekStart(w) : weekStart(today)
   const weeks = monthGrid(ym)
@@ -77,6 +78,13 @@ export async function EventsSurface({ view, searchParams }: { view: EventsView; 
       />
 
       {view === 'list' && <EventList groups={groups} />}
+      {view === 'list' && !searching && windowDays < 30 && (
+        <p className="mt-10 text-center">
+          <Link href={`/${query({ ...filterParams, days: '30' })}`} className="link-gold font-display italic">
+            see the next 30 days →
+          </Link>
+        </p>
+      )}
       {view === 'month' && (
         <MonthView
           weeks={weeks}
