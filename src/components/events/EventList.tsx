@@ -3,6 +3,7 @@ import type { DayGroup } from '@/lib/events/grouping'
 import { todayKey } from '@/lib/events/grouping'
 import { formatDayHeading } from '@/lib/events/format'
 import { EventRow } from '@/components/events/EventRow'
+import { FlyerImage } from '@/components/FlyerImage'
 
 export function EventList({ groups }: { groups: DayGroup[] }) {
   const today = todayKey()
@@ -28,10 +29,11 @@ export function EventList({ groups }: { groups: DayGroup[] }) {
               <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
                 {withImages.map(({ e, occursAt }) => (
                   <Link key={`${e._id}${occursAt}`} href={`/events/${e.slug}`} className="shrink-0">
-                    <img
-                      src={e.imageUrl}
+                    <FlyerImage
+                      src={e.imageUrl!}
                       alt={`flyer for ${e.title}`}
-                      loading="lazy"
+                      width={128}
+                      height={80}
                       className="h-20 w-32 rounded-md object-cover ring-1 ring-[var(--line-soft)] transition-opacity hover:opacity-90"
                     />
                   </Link>

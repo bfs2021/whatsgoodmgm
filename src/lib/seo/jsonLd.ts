@@ -104,11 +104,8 @@ export function buildEventJsonLd(event: EventDoc, url: string): Record<string, u
     description,
     url,
     ...(event.imageUrl ? { image: event.imageUrl } : {}),
-    organizer: {
-      '@type': 'Organization',
-      name: 'WhatsGoodMGM',
-      url: SITE_URL,
-    },
+    // no `organizer`: we list events, we don't run them, and we don't store
+    // who does. Better to omit it than to claim the wrong organizer.
   }
 
   if (venue) {
@@ -139,6 +136,12 @@ export function buildEventJsonLd(event: EventDoc, url: string): Record<string, u
   return jsonLd
 }
 
+const MM_INTELLIGENCE = {
+  '@type': 'Organization',
+  name: 'MM Intelligence',
+  url: 'https://www.mmintelligence.ai',
+}
+
 // WebSite JSON-LD for the home page, with a SearchAction so engines can wire a
 // sitelinks search box straight to the events search.
 export function buildWebsiteJsonLd(): Record<string, unknown> {
@@ -149,6 +152,8 @@ export function buildWebsiteJsonLd(): Record<string, unknown> {
     url: SITE_URL,
     description:
       'a free, community-made guide to what\'s good in Montgomery, Alabama. events, maps, and a calendar you can subscribe to.',
+    creator: MM_INTELLIGENCE,
+    publisher: MM_INTELLIGENCE,
     potentialAction: {
       '@type': 'SearchAction',
       target: {

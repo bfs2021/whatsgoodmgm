@@ -2,6 +2,7 @@ import Link from 'next/link'
 import type { EventDoc } from '@/lib/sanity/queries'
 import { formatEventTime } from '@/lib/events/format'
 import { categoryHue } from '@/lib/events/categoryHue'
+import { FlyerImage } from '@/components/FlyerImage'
 
 export function EventRow({ event, occursAt }: { event: EventDoc; occursAt: string }) {
   const hue = categoryHue(event.category)
@@ -32,10 +33,11 @@ export function EventRow({ event, occursAt }: { event: EventDoc; occursAt: strin
         </span>
       </span>
       {event.imageUrl && (
-        <img
+        <FlyerImage
           src={event.imageUrl}
           alt=""
-          loading="lazy"
+          width={64}
+          height={48}
           className="h-12 w-16 shrink-0 rounded object-cover ring-1 ring-[var(--line-soft)]"
         />
       )}

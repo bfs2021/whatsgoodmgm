@@ -11,6 +11,7 @@ import { buildEventJsonLd, jsonLdScript } from '@/lib/seo/jsonLd'
 import { SITE_URL } from '@/lib/siteUrl'
 import { EventCard } from '@/components/EventCard'
 import VenueMiniMapLoader from '@/components/VenueMiniMapLoader'
+import { FlyerImage } from '@/components/FlyerImage'
 
 export const revalidate = 3600
 
@@ -129,10 +130,15 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
         dangerouslySetInnerHTML={{ __html: jsonLdScript(eventJsonLd) }}
       />
       {event.imageUrl && (
-        <img
+        <FlyerImage
           src={event.imageUrl}
           alt={`Flyer for ${event.title}`}
-          className="mb-8 w-full rounded-lg object-cover ring-1 ring-[var(--line-soft)]"
+          width={1344}
+          height={896}
+          sizes="(min-width: 704px) 672px, 100vw"
+          loading="eager"
+          fetchPriority="high"
+          className="mb-8 h-auto w-full rounded-lg object-cover ring-1 ring-[var(--line-soft)]"
         />
       )}
 
