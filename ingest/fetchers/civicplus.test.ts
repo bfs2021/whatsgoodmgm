@@ -145,11 +145,19 @@ describe('civicplusFetcher.fetchUpcoming', () => {
   afterEach(() => vi.unstubAllGlobals())
 
   it('fetches the feed and returns events within the window', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, text: async () => xml })))
-    const evs = await civicplusFetcher.fetchUpcoming(
-      { _id: 'x', name: 'wetumpka', platform: 'civicplus', identifier: 'https://wetumpkaal.gov/RSSFeed.aspx?ModID=58&CID=All-calendar.xml' }, 3650)
-    expect(evs.length).toBeGreaterThan(0)
-    for (const ev of evs) expect(ev.sourceType).toBe('civicplus')
+    // Pin "now" before the fixture's Aug/Sep 2026 events; with the real clock this
+    // test started failing once those dates passed.
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-08-29T13:00:00Z'))
+    try {
+      vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, text: async () => xml })))
+      const evs = await civicplusFetcher.fetchUpcoming(
+        { _id: 'x', name: 'wetumpka', platform: 'civicplus', identifier: 'https://wetumpkaal.gov/RSSFeed.aspx?ModID=58&CID=All-calendar.xml' }, 3650)
+      expect(evs.length).toBeGreaterThan(0)
+      for (const ev of evs) expect(ev.sourceType).toBe('civicplus')
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('skips an item whose date is unparseable instead of discarding the whole batch', async () => {

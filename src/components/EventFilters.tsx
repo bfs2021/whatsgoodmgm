@@ -170,7 +170,13 @@ export default function EventFilters({ q, category, interest, days, free, catego
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Keep the field in sync if the URL changes from elsewhere (e.g. back/forward nav).
-  useEffect(() => setSearch(q ?? ''), [q])
+  // Adjusting state during render (not in an effect) avoids a cascading re-render:
+  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
+  const [syncedQ, setSyncedQ] = useState(q)
+  if (q !== syncedQ) {
+    setSyncedQ(q)
+    setSearch(q ?? '')
+  }
 
   function navigate(next: { q?: string; category?: string; interest?: string; days?: string; free?: boolean }) {
     const params = new URLSearchParams()
