@@ -33,6 +33,13 @@ export function FlyerImage({
 }: FlyerImageProps) {
   const [failed, setFailed] = useState(false)
 
+  // A flyer that 404s before hydration never reaches onError, so check the
+  // element once it mounts as well: complete with no intrinsic width is the
+  // browser's own verdict that the image did not load.
+  const checkAlreadyFailed = (node: HTMLImageElement | null) => {
+    if (node?.complete && node.naturalWidth === 0) setFailed(true)
+  }
+
   if (failed) {
     const label = (title ?? (typeof alt === 'string' ? alt : '')).trim()
     const decorative = alt === ''
@@ -59,6 +66,7 @@ export function FlyerImage({
 
   return (
     <Image
+      ref={checkAlreadyFailed}
       src={src}
       alt={alt}
       className={className}
